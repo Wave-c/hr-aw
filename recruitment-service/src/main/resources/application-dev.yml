@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  r2dbc:
+    url:
+    username:
+    password:
+  flyway:
+    url:
+    locations: classpath:db/migrations
+    user:
+    password:
+    enabled: true
+
+server:
+  port: 8078

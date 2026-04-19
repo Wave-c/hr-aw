@@ -15,9 +15,9 @@
 	<modules>
 		<module>user-service</module>
 		<module>profile-service</module>
-		<module>respond-service</module>
 		<module>recommendations-service</module>
 		<module>gateway-service</module>
+		<module>recruitment-service</module>
 	</modules>
 	<name>hr-aw</name>
 	<description/>
