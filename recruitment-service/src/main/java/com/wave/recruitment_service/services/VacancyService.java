@@ -3,6 +3,7 @@ package com.wave.recruitment_service.services;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class VacancyService {
     private final VacancyRepository vacancyRepository;
+
+    public Mono<Vacancy> getVacancyById(UUID id) {
+        return vacancyRepository.findById(id);
+    }
 
     public Mono<Vacancy> addVacancy(VacancyDto vacancyDto, UUID createdBy) {
         return vacancyRepository.save(new Vacancy(
@@ -73,5 +78,29 @@ public class VacancyService {
     public Mono<Vacancy> getVacancy(UUID id) {
         return vacancyRepository.findById(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Vacancy not found")));
+    }
+
+    public Mono<Void> updateVacancy(UUID id, VacancyDto vacancyDto, UUID userId) {
+        return vacancyRepository.findById(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Vacancy not found")))
+            .flatMap(v -> {
+                if (!v.getCreatedBy().equals(userId)) {
+                    return Mono.error(new AccessDeniedException("Only creator can update vacancy"));
+                }
+                setIfNotNull(vacancyDto.title(), v::setTitle);
+                setIfNotNull(vacancyDto.description(), v::setDescription);
+                setIfNotNull(vacancyDto.formats(), v::setFormats);
+                setIfNotNull(vacancyDto.tags(), v::setTags);
+                setIfNotNull(vacancyDto.salaryFrom(), v::setSalaryFrom);
+                setIfNotNull(vacancyDto.salaryTo(), v::setSalaryTo);
+                return vacancyRepository.save(v);
+            })
+            .then();
+    }
+
+    private <T> void setIfNotNull(T value, Consumer<T> setter) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

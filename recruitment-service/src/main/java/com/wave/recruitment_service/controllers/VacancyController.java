@@ -61,6 +61,12 @@ public class VacancyController {
             )));
     }
 
+    @PatchMapping("/update/{id}")
+    public Mono<ResponseEntity<String>> updateVacancy(@PathVariable UUID id, @RequestBody VacancyDto vacancyDto, @RequestHeader("X-User-Id") UUID userId) {
+        return vacancyService.updateVacancy(id, vacancyDto, userId)
+            .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
     @GetMapping("/{id}")
     public Mono<ResponseEntity<VacancyDto>> getVacancy(@PathVariable UUID id) {
         return vacancyService.getVacancy(id)
