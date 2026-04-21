@@ -18,6 +18,7 @@
 		<module>recommendations-service</module>
 		<module>gateway-service</module>
 		<module>recruitment-service</module>
+		<module>shared-components</module>
 	</modules>
 	<name>hr-aw</name>
 	<description/>

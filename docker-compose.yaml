@@ -7,8 +7,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: user_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: wave
+      POSTGRES_PASSWORD: Den12345678890/
     ports:
       - "5432:5432"
     volumes:

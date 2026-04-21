@@ -2,11 +2,17 @@ package com.wave.recruitment_service.models.dtos;
 
 import java.util.UUID;
 
+import com.wave.components.ApplicationStatus;
+
 import lombok.NonNull;
 
 public record ApplicationDto(
     UUID id,
+    @NonNull String firstName,
+    @NonNull String lastName,
+    String patronymic,
     @NonNull String resumeText,
     String coverLetter,
-    Integer expectedSalary
+    Integer expectedSalary,
+    ApplicationStatus status
 ) { }

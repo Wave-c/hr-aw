@@ -37,9 +37,13 @@ public class ApplicationController {
         return applicationService.getByVacancyId(id, userId)
             .map(a -> new ApplicationDto(
                 a.getId(),
+                a.getFirstName(),
+                a.getLastName(),
+                a.getPatronymic(),
                 a.getResumeText(),
                 a.getCoverLetter(),
-                a.getExpectedSalary()
+                a.getExpectedSalary(),
+                a.getStatus()
             ));
     }
 
@@ -48,9 +52,13 @@ public class ApplicationController {
         return applicationService.getById(id, userId)
             .map(a -> new ApplicationDto(
                 a.getId(),
+                a.getFirstName(),
+                a.getLastName(),
+                a.getPatronymic(),
                 a.getResumeText(),
                 a.getCoverLetter(),
-                a.getExpectedSalary()
+                a.getExpectedSalary(),
+                a.getStatus()
             ));
     }
 }
