@@ -1,0 +1,13 @@
+spring:
+  elasticsearch:
+    uris: http://localhost:9200
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5453/profile_db
+    username: wave
+    password: Den1234567890/
+  flyway:
+    url: jdbc:postgresql://localhost:5453/profile_db
+    locations: classpath:db/migrations
+    user: wave
+    password: Den1234567890/
+    enabled: true
