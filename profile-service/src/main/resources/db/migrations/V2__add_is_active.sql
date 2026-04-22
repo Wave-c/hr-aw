@@ -1,0 +1,1 @@
+ALTER TABLE profiles_t ADD is_active BOOLEAN

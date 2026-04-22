@@ -1,0 +1,25 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://192.168.77.10:5452/user_db
+    username: wave
+    password: Den1234567890/
+  flyway:
+    url: jdbc:postgresql://192.168.77.10:5452/user_db
+    locations: classpath:db/migrations
+    user: wave
+    password: Den1234567890/
+    enabled: true
+  redis:
+    refresh-token-storage:
+      host: 192.168.77.10
+      port: 6379
+
+server:
+  port: 8081
+
+jwt:
+  private-key-file: keys/private.pem
+  public-key-file: keys/public.pem
+  issuer: http://192.168.77.10:8081
+  audience: gateway
+  token-expiration-seconds: 3600

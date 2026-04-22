@@ -14,7 +14,7 @@ services:
     volumes:
       - user_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d user_db"]
+      test: ["CMD-SHELL", "pg_isready -U wave -d user_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,7 +32,25 @@ services:
     volumes:
       - profile_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d user_db"]
+      test: ["CMD-SHELL", "pg_isready -U wave -d profile_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  recruitment-db:
+    image: postgres:16
+    container_name: recruitment-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: recruitment_db
+      POSTGRES_USER: wave
+      POSTGRES_PASSWORD: Den1234567890/
+    ports:
+      - "5454:5432"
+    volumes:
+      - recruitment_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wave -d recruitment_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -140,9 +158,30 @@ services:
       timeout: 5s
       retries: 10
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: wave@example.com
+      PGADMIN_DEFAULT_PASSWORD: Den1234567890/
+
+    ports:
+      - "5050:80"
+
+    depends_on:
+      - user-db
+      - profile-db
+
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
 volumes:
   user_db_data:
   profile_db_data:
   redis_data:
   kafka_data:
   es_data:
+  pgadmin_data:
+  recruitment_db_data:

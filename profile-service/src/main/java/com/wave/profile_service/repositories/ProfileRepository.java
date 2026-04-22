@@ -9,5 +9,4 @@ import com.wave.profile_service.models.Profile;
 
 @Repository
 public interface ProfileRepository extends ReactiveCrudRepository<Profile, UUID> {
-
 }

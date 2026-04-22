@@ -1,2 +1,6 @@
+services:
+  recruitment-service: http://192.168.77.10:8078
+  ml-service: http://192.168.77.10:8000
+
 server:
   port: 8077

@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.wave.dtos.ApplicationDto;
+import com.wave.dtos.VacancyDto;
 import com.wave.recommendations_service.components.MlClient;
 import com.wave.recommendations_service.components.TextBuilder;
-import com.wave.recommendations_service.models.ApplicationDto;
 import com.wave.recommendations_service.models.CandidateItem;
 import com.wave.recommendations_service.models.RecommendationResult;
 import com.wave.recommendations_service.models.ScoreResponseItem;
-import com.wave.recommendations_service.models.VacancyDto;
 
 import reactor.core.publisher.Mono;
 

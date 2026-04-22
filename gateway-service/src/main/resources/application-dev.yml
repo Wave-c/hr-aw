@@ -1,0 +1,42 @@
+server:
+  forward-headers-strategy: framework
+  port: 8877
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://192.168.77.10:8081/.well-known/jwks.json
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+          - id: profile
+            uri: http://192.168.77.10:8080
+            predicates:
+            - Path=/profile/**
+            filters:
+            - StripPrefix=1
+          - id: recommendations
+            uri: http://192.168.77.10:8077
+            predicates:
+            - Path=/recommendations/**
+            filters:
+            - StripPrefix=1
+          - id: recruitment
+            uri: http://192.168.77.10:8078
+            predicates:
+            - Path=/recruitment/**
+            filters:
+            - StripPrefix=1
+          - id: user
+            uri: http://192.168.77.10:8081
+            predicates:
+            - Path=/user/**
+            filters:
+            - StripPrefix=1

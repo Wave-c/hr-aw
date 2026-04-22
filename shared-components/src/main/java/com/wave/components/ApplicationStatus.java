@@ -19,6 +19,7 @@ public enum ApplicationStatus {
     }
 
     public static Node findNode(ApplicationStatus status) {
+        System.out.println("Finding node for status " + status);
         Node curr = PIPELINE_HEAD;
         while (curr != null) {
             if (curr.getData() == status) return curr;

@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "spring.redis.refresh-token-storage.host",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.redis.refresh-token-storage.host'"
+  },
+  {
+    "name": "spring.redis.refresh-token-storage.port",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.redis.refresh-token-storage.port'"
+  },
+  {
+    "name": "jwt.private-key-file",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.private-key-file'"
+  },
+  {
+    "name": "jwt.public-key-file",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.public-key-file'"
+  },
+  {
+    "name": "jwt.issuer",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.issuer'"
+  },
+  {
+    "name": "jwt.audience",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.audience'"
+  },
+  {
+    "name": "jwt.token-expiration-seconds",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.token-expiration-seconds'"
+  }
+]}

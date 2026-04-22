@@ -2,6 +2,7 @@ package com.wave.recommendations_service.components;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -13,11 +14,18 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class MlClient {
+    @Value("${services.ml-service}")
+    private String mlServiceUrl;
 
     private final WebClient webClient;
 
-    public MlClient(WebClient.Builder builder) {
-        this.webClient = builder.baseUrl("http://192.168.77.10:8000").build();
+    public MlClient(
+            WebClient.Builder builder,
+            @Value("${services.ml-service}") String mlServiceUrl
+    ) {
+        this.webClient = builder
+                .baseUrl(mlServiceUrl)
+                .build();
     }
 
     public Mono<List<ScoreResponseItem>> score(

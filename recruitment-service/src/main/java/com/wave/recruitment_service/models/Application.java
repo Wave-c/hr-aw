@@ -2,7 +2,9 @@ package com.wave.recruitment_service.models;
 
 import java.util.UUID;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 import com.wave.components.ApplicationStatus;
@@ -16,7 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("application")
-public class Application {
+public class Application implements Persistable<UUID> {
+    @Id
     private UUID id;
     private String firstName;
     private String lastName;
@@ -27,6 +30,8 @@ public class Application {
     private Integer expectedSalary;
     private ApplicationStatus status;
 
+    @Transient
+    private boolean isNew = true;
     @Transient
     private Node currentNode;
 }

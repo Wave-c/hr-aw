@@ -1,0 +1,1 @@
+ALTER Table application ADD status VARCHAR(24);

@@ -2,8 +2,8 @@ package com.wave.recommendations_service.components;
 
 import org.springframework.stereotype.Component;
 
-import com.wave.recommendations_service.models.ApplicationDto;
-import com.wave.recommendations_service.models.VacancyDto;
+import com.wave.dtos.ApplicationDto;
+import com.wave.dtos.VacancyDto;
 
 @Component
 public class TextBuilder {

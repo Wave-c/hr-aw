@@ -1,4 +1,4 @@
-package com.wave.recruitment_service.models.dtos;
+package com.wave.dtos;
 
 import java.util.List;
 

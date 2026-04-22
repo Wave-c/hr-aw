@@ -3,12 +3,16 @@ package com.wave.recruitment_service.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wave.dtos.ApplicationDto;
+import com.wave.dtos.VacancyDto;
+import com.wave.dtos.VacancyWithApplications;
 import com.wave.recruitment_service.models.dtos.AddAvailableDto;
-import com.wave.recruitment_service.models.dtos.VacancyDto;
 import com.wave.recruitment_service.models.dtos.VacancyWithIdDto;
+import com.wave.recruitment_service.services.ApplicationService;
 import com.wave.recruitment_service.services.VacancyService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -23,22 +27,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/vacancies")
 public class VacancyController {
     private final VacancyService vacancyService;
+    private final ApplicationService applicationService;
 
     @PostMapping("/add")
     public Mono<ResponseEntity<UUID>> addVacancy(@RequestBody VacancyDto vacancyDto, @RequestHeader("X-User-Id") UUID userId) {
         return vacancyService.addVacancy(vacancyDto, userId)
-            .map(v -> ResponseEntity.ok(v.getId()));
+            .map(v -> ResponseEntity.ok(v.getId()))
+            .doOnError(err -> log.error("Controller error", err));
     }
 
     @PatchMapping("/add-available")
     public Mono<ResponseEntity<String>> addUsersToAvailable(@RequestHeader("X-User-Id") UUID userId, @RequestBody AddAvailableDto addAvailableDto) {
+        log.info("Received request to add users {} to available for vacancy {}", addAvailableDto.availableFor(), addAvailableDto.vacancyId());
         return vacancyService.addUsersToAvailable(addAvailableDto, userId)
+            .doOnError(err -> log.error("Controller error", err))
             .then(Mono.just(ResponseEntity.ok().build()));
     }
 
@@ -79,5 +87,33 @@ public class VacancyController {
                 v.getSalaryTo()
             )));
     }
+
+    @GetMapping("/with-applications/{id}")
+    public Mono<VacancyWithApplications> getMethodName(@PathVariable UUID id, @RequestHeader("X-User-Id") UUID userId) {
+        return Mono.zip(
+            vacancyService.getVacancy(id),
+            applicationService.getByVacancyId(id, userId).collectList()
+        ).map(tuple -> new VacancyWithApplications(
+            new VacancyDto(
+                tuple.getT1().getTitle(),
+                tuple.getT1().getDescription(),
+                tuple.getT1().getFormats(),
+                tuple.getT1().getTags(),
+                tuple.getT1().getSalaryFrom(),
+                tuple.getT1().getSalaryTo()
+            ),
+            tuple.getT2().stream().map(a -> new ApplicationDto(
+                a.getId(),
+                a.getFirstName(),
+                a.getLastName(),
+                a.getPatronymic(),
+                a.getResumeText(),
+                a.getCoverLetter(),
+                a.getExpectedSalary(),
+                a.getStatus()
+            )).toList()
+        ));
+    }
+
 
 }
