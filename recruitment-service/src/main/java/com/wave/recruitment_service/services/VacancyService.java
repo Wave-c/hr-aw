@@ -2,6 +2,8 @@ package com.wave.recruitment_service.services;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -56,7 +58,8 @@ public class VacancyService {
         return vacancyRepository.findById(addAvailableDto.vacancyId())
             .switchIfEmpty(Mono.error(new NotFoundException("Vacancy not found")))
             .flatMap(v -> {
-                if (!v.getCreatedBy().equals(userId)) {
+                if (!v.getCreatedBy().equals(userId) &&
+                    !v.getAvailableFor().contains(userId)) {
                     return Mono.error(new AccessDeniedException("Only creator can add users to available"));
                 }
                 var availableFor = v.getAvailableFor();
@@ -65,6 +68,35 @@ public class VacancyService {
                     .stream().distinct().collect(Collectors.toList())
                 );
                 v.setNew(false);
+                return vacancyRepository.save(v);
+            })
+            .then();
+    }
+
+    public Mono<Void> removeUsersFromAvailable(AddAvailableDto addAvailableDto, UUID userId) {
+        log.info("Removing users {} from available for vacancy {}", addAvailableDto.availableFor(), addAvailableDto.vacancyId());
+        return vacancyRepository.findById(addAvailableDto.vacancyId())
+            .switchIfEmpty(Mono.error(new NotFoundException("Vacancy not found")))
+            .flatMap(v -> {
+
+                if (!v.getCreatedBy().equals(userId) &&
+                    !v.getAvailableFor().contains(userId)) {
+                    return Mono.error(new AccessDeniedException("Only creator can remove users from available"));
+                }
+
+                List<UUID> toRemove = Optional.ofNullable(addAvailableDto.availableFor())
+                        .orElseGet(List::of);
+
+                List<UUID> updated = Optional.ofNullable(v.getAvailableFor())
+                        .orElseGet(List::of)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .filter(id -> !toRemove.contains(id))
+                        .toList();
+
+                v.setAvailableFor(updated);
+                v.setNew(false);
+
                 return vacancyRepository.save(v);
             })
             .then();

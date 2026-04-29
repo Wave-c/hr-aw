@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wave.dtos.ApplicationDto;
 import com.wave.dtos.VacancyDto;
 import com.wave.dtos.VacancyWithApplications;
+import com.wave.recruitment_service.models.Vacancy;
 import com.wave.recruitment_service.models.dtos.AddAvailableDto;
 import com.wave.recruitment_service.models.dtos.VacancyWithIdDto;
 import com.wave.recruitment_service.services.ApplicationService;
@@ -16,6 +17,8 @@ import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
+
 
 @Log4j2
 @RestController
@@ -46,6 +50,14 @@ public class VacancyController {
     public Mono<ResponseEntity<String>> addUsersToAvailable(@RequestHeader("X-User-Id") UUID userId, @RequestBody AddAvailableDto addAvailableDto) {
         log.info("Received request to add users {} to available for vacancy {}", addAvailableDto.availableFor(), addAvailableDto.vacancyId());
         return vacancyService.addUsersToAvailable(addAvailableDto, userId)
+            .doOnError(err -> log.error("Controller error", err))
+            .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
+    @PatchMapping("/remove-available")
+    public Mono<ResponseEntity<String>> removeUsersFromAvailable(@RequestHeader("X-User-Id") UUID userId, @RequestBody AddAvailableDto addAvailableDto) {
+        log.info("Received request to remove users {} from available for vacancy {}", addAvailableDto.availableFor(), addAvailableDto.vacancyId());
+        return vacancyService.removeUsersFromAvailable(addAvailableDto, userId)
             .doOnError(err -> log.error("Controller error", err))
             .then(Mono.just(ResponseEntity.ok().build()));
     }
@@ -88,8 +100,18 @@ public class VacancyController {
             )));
     }
 
+    @GetMapping("/get-available-for/{id}")
+    public Flux<UUID> getAvailableFor(@PathVariable UUID id) {
+    return vacancyService.getVacancy(id)
+            .map(Vacancy::getAvailableFor)
+            .flatMapMany(list -> Flux.fromIterable(
+                    Optional.ofNullable(list).orElseGet(List::of)
+            ));
+    }
+
+
     @GetMapping("/with-applications/{id}")
-    public Mono<VacancyWithApplications> getMethodName(@PathVariable UUID id, @RequestHeader("X-User-Id") UUID userId) {
+    public Mono<VacancyWithApplications> getVacancyWithApplications(@PathVariable UUID id, @RequestHeader("X-User-Id") UUID userId) {
         return Mono.zip(
             vacancyService.getVacancy(id),
             applicationService.getByVacancyId(id, userId).collectList()

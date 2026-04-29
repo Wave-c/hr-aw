@@ -16,6 +16,35 @@ spring:
       server:
         webflux:
           routes:
+          - id: site
+            uri: http://192.168.77.10:5173
+            predicates:
+            - Path=/site/**
+            filters:
+            - StripPrefix=1
+          - id: site-static
+            uri: http://192.168.77.10:5173
+            predicates:
+            - Path=/static/**
+          - id: site-vite
+            uri: http://192.168.77.10:5173
+            predicates:
+            - Path=/@vite/**
+          - id: site-src
+            uri: http://192.168.77.10:5173
+            predicates:
+            - Path=/src/**
+          - id: site-react-refresh
+            uri: http://192.168.77.10:5173
+            predicates:
+            - Path=/@react-refresh/**
+          - id: site-node-modules
+            uri: http://192.168.77.10:5173
+            predicates:
+            - Path=/node_modules/**
+
+
+
           - id: profile
             uri: http://192.168.77.10:8080
             predicates:

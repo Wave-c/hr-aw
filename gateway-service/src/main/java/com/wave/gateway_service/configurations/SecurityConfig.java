@@ -19,7 +19,13 @@ public class SecurityConfig {
         return http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(ex -> ex
+                .pathMatchers("/site/**").permitAll()
+                .pathMatchers("/static/**").permitAll()
                 .pathMatchers("/user/**").permitAll()
+                .pathMatchers("/@vite/**").permitAll()
+                .pathMatchers("/src/**").permitAll()
+                .pathMatchers("/@react-refresh/**").permitAll()
+                .pathMatchers("/node_modules/**").permitAll()
                 .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

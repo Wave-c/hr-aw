@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wave.dtos.ApplicationDto;
 import com.wave.recruitment_service.models.dtos.AddApplicationsDto;
+import com.wave.recruitment_service.models.dtos.ApplicationActionDto;
 import com.wave.recruitment_service.services.ApplicationService;
 
 import lombok.RequiredArgsConstructor;
@@ -66,15 +67,15 @@ public class ApplicationController {
     }
 
     @PostMapping("/reject")
-    public Mono<ResponseEntity<String>> reject(@RequestBody UUID applicationId, @RequestHeader("X-User-Id") UUID userId) {
+    public Mono<ResponseEntity<String>> reject(@RequestBody ApplicationActionDto applicationId, @RequestHeader("X-User-Id") UUID userId) {
         log.info("Received request to reject application {} from user {}", applicationId, userId);
-        return applicationService.reject(applicationId, userId)
+        return applicationService.reject(applicationId.applicationId(), userId)
             .thenReturn(ResponseEntity.ok().build());
     }
 
     @PostMapping("/apply") //TODO:: обработка попытки "продвинуть" заявку, которая уже отклонена
-    public Mono<ResponseEntity<String>> applyNext(@RequestBody UUID applicationId, @RequestHeader("X-User-Id") UUID userId) {
-        return applicationService.nextStatus(applicationId, userId)
+    public Mono<ResponseEntity<String>> applyNext(@RequestBody ApplicationActionDto applicationId, @RequestHeader("X-User-Id") UUID userId) {
+        return applicationService.nextStatus(applicationId.applicationId(), userId)
             .thenReturn(ResponseEntity.ok().build());
     }
 

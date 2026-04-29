@@ -79,7 +79,7 @@ public class ProfileService {
     public Mono<ProfileDto> getProfile(UUID userId) {
         return profileRepository.findById(userId)
             .map(p -> new ProfileDto(
-                null,
+                p.getId(),
                 p.getFirstName(),
                 p.getLastName(),
                 p.getPatronymic(),
